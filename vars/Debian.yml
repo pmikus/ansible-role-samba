@@ -16,6 +16,7 @@ samba_username_map_file: "{{ samba_configuration_dir }}/smbusers"
 samba_services:
   - "smbd"
   - "nmbd"
+samba_service_mgr: ""
 
 samba_www_documentroot: "/var/www"
 
