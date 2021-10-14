@@ -2,9 +2,9 @@
 ---
 
 samba_packages:
-  - "samba-common"
   - "samba"
   - "samba-client"
+  - "samba-common"
 
 samba_vfs_packages:
   - "samba-vfs-modules"
