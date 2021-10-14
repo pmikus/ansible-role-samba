@@ -4,9 +4,9 @@
 dependencies: []
 
 galaxy_info:
-  role_name: FIXME
+  role_name: samba
   author: pmikus
-  description: FIXME for Linux.
+  description: Samba for Linux.
   company: none
   license: "license (BSD, MIT)"
   min_ansible_version: 2.9
@@ -17,4 +17,10 @@ galaxy_info:
         - groovy
         - hirsute
   galaxy_tags:
-    - FIXME
+    - system
+    - samba
+    - windows
+    - filesystem
+    - fileshare
+    - sharing
+    - files

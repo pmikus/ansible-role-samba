@@ -1,13 +1,112 @@
 ---
 # file: tasks/main.yaml
 
-- include_tasks: "{{ ansible_distribution|lower }}.yaml"
-  tags:
-    - FIXME-inst-dependencies
+- name: Include OS-specific Variables.
+  include_vars: "{{ ansible_os_family }}.yml"
 
-- name: Install FIXME.
+- name: Inst - Samba packages
   package:
-    name: "{{ FIXME_package }}"
-    state: "{{ FIXME_package_state }}"
+    name: "{{ samba_packages }}"
+    state: "present"
+  tags: samba-inst-package
+
+- name: Inst - Samba VFS Extensions Packages
+  package:
+    name: "{{ samba_vfs_packages }}"
+    state: "present"
+  tags: samba-inst-package
+
+- name: Inst - Create Samba Shares Root Directory
+  file:
+    state: "directory"
+    path: "{{ samba_shares_root }}"
+    owner: "root"
+    group: "root"
+    mode: "0755"
+  when: samba_shares | length > 0
   tags:
-    - FIXME-inst
+    - samba-inst
+
+- name: Inst - Create Samba Shares Directories
+  with_items: "{{ samba_shares }}"
+  file:
+    state: "directory"
+    path: "{{ item.path|default([samba_shares_root,item.name]|join('/')) }}"
+    owner: "{{ item.owner|default('root') }}"
+    group: "{{ item.group|default('users') }}"
+    mode: "{{ item.directory_mode|default('0775') }}"
+    setype: "{{ item.setype|default('samba_share_t') }}"
+  tags:
+    - samba-inst
+
+- name: Inst - Ensure Webserver Document Root Exists
+  file:
+    name: "{{ samba_www_documentroot }}"
+    state: "directory"
+  when: samba_create_varwww_symlinks | bool
+  tags:
+    - samba-inst
+
+- name: Inst - Create Link To Shares In Webserver Document Root
+  file:
+    state: link
+    path: "{{ samba_www_documentroot }}/{{ item.name }}"
+    src: "{{ item.path|default([samba_shares_root,item.name]|join('/')) }}"
+  with_items: "{{ samba_shares }}"
+  when: samba_create_varwww_symlinks | bool
+  tags:
+    - samba-inst
+
+- name: Conf - Samba
+  template:
+    dest: "{{ samba_configuration }}"
+    src: smb.conf.j2
+    validate: 'testparm -s %s'
+  notify:
+    - Restart Samba
+  tags:
+    - samba-conf
+
+- name: Conf - Global Include File
+  template:
+    src: "{{ samba_global_include }}"
+    dest: "{{ samba_configuration_dir }}"
+    validate: 'testparm -s %s'
+  when: samba_global_include is defined
+  notify:
+    - Restart Samba
+  tags:
+    - samba-conf
+
+- name: Conf - Home Include File
+  template:
+    src: "{{ samba_homes_include }}"
+    dest: "{{ samba_configuration_dir }}"
+    validate: 'testparm -s %s'
+  when: samba_homes_include is defined
+  notify:
+    - Restart Samba
+  tags:
+    - samba-conf
+
+- name: Conf - Share Specific Include Files
+  template:
+    src: "{{ item.include_file }}"
+    dest: "{{ samba_configuration_dir }}"
+    validate: 'testparm -s %s'
+  when: item.include_file is defined
+  notify:
+    - Restart Samba
+  with_items: "{{ samba_shares }}"
+  tags:
+    - samba-conf
+
+- name: Conf - Create Username Map File If Needed
+  template:
+    dest: "{{ samba_username_map_file }}"
+    src: smbusers.j2
+  notify:
+    - Restart Samba
+  when: samba_username_map is defined
+  tags:
+    - samba-conf

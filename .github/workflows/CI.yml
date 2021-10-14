@@ -1,7 +1,7 @@
 ---
 name: Ansible CI
 
-on:
+'on':
   # Trigger the workflow on push or pull request,
   # but only for the main branch
   push:
@@ -13,7 +13,7 @@ on:
 
 defaults:
   run:
-    working-directory: 'pmikus.FIXME'
+    working-directory: 'pmikus.samba'
 
 jobs:
   molecule:
@@ -29,14 +29,16 @@ jobs:
       - name: Check out the codebase.
         uses: actions/checkout@v2
         with:
-          path: 'pmikus.FIXME'
+          path: 'pmikus.samba'
 
       - name: Set up Python 3.
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
+
       - name: Install test pip dependencies.
         run: pip3 install ansible molecule[docker] docker
+
       - name: Run Molecule tests.
         run: molecule test
         env:
@@ -51,13 +53,16 @@ jobs:
       - name: Check out the codebase.
         uses: actions/checkout@v2
         with:
-          path: 'pmikus.FIXME'
+          path: 'pmikus.samba'
+
       - name: Set up Python 3.
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
+
       - name: Install test dependencies.
         run: pip3 install yamllint
+
       - name: Lint code.
         run: |
           yamllint .
@@ -69,8 +74,9 @@ jobs:
       - name: Check out the codebase.
         uses: actions/checkout@v1
         with:
-          path: 'pmikus.FIXME'
+          path: 'pmikus.samba'
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v1.6
         with:

@@ -1,0 +1,10 @@
+---
+# file handlers/main.yaml
+
+- name: Restart Samba
+  systemd:
+    daemon_reload: true
+    enabled: true
+    name: "{{ item }}"
+    state: "{{ samba_restart_handler_state }}"
+  loop: "{{ samba_services }}"

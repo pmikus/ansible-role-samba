@@ -1,8 +1,14 @@
-# Ansible Role: Default template
+# Ansible Role: Samba
+
+[![CI](https://github.com/pmikus/ansible-role-samba/actions/workflows/CI.yml/badge.svg)](https://github.com/pmikus/ansible-role-samba/actions/workflows/CI.yml)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=pmikus_ansible-role-samba&metric=reliability_rating)](https://sonarcloud.io/dashboard?id=pmikus_ansible-role-samba)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=pmikus_ansible-role-samba&metric=bugs)](https://sonarcloud.io/dashboard?id=pmikus_ansible-role-samba)
+
+Installs Samba client and server.
 
 ## Requirements
 
-None.
+Samba requires ports 137, 138, 139, 445 to be open to function properly.
 
 ## Role Variables
 
@@ -21,7 +27,7 @@ None
 
     - hosts: localhost
       roles:
-        - pmikus.FIXME
+        - pmikus.samba
 
 ## License
 

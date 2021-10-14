@@ -1,14 +1,14 @@
 ---
 name: Ansible CD
 
-on:
+'on':
   release:
     types:
       - published
 
 defaults:
   run:
-    working-directory: 'pmikus.FIXME'
+    working-directory: 'pmikus.samba'
 
 jobs:
   molecule:
@@ -24,14 +24,16 @@ jobs:
       - name: Check out the codebase.
         uses: actions/checkout@v2
         with:
-          path: 'pmikus.FIXME'
+          path: 'pmikus.samba'
 
       - name: Set up Python 3.
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
+
       - name: Install test pip dependencies.
         run: pip3 install ansible molecule[docker] docker
+
       - name: Run Molecule tests.
         run: molecule test
         env:
