@@ -4,7 +4,14 @@
 - name: Include OS-specific Variables.
   include_vars: "{{ ansible_os_family }}.yml"
 
-- name: Inst - Samba packages
+- name: Inst - Update Repositories Cache
+  apt:
+    update_cache: true
+  when:
+    - ansible_os_family == 'Debian'
+  tags: samba-inst-package
+
+- name: Inst - Samba Packages
   package:
     name: "{{ samba_packages }}"
     state: "present"
