@@ -16,6 +16,7 @@ galaxy_info:
         - focal
         - groovy
         - hirsute
+        - impish
   galaxy_tags:
     - system
     - samba
