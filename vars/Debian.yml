@@ -5,6 +5,7 @@ samba_packages:
   - "samba"
   - "samba-client"
   - "samba-common"
+  - "libpam-winbind"
 
 samba_vfs_packages:
   - "samba-vfs-modules"
