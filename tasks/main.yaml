@@ -5,26 +5,26 @@
   include_vars: "{{ ansible_os_family }}.yml"
 
 - name: Inst - Update Repositories Cache
-  apt:
+  ansible.builtin.apt:
     update_cache: true
   when:
     - ansible_os_family == 'Debian'
   tags: samba-inst-package
 
 - name: Inst - Samba Packages
-  package:
+  ansible.builtin.package:
     name: "{{ samba_packages }}"
     state: "present"
   tags: samba-inst-package
 
 - name: Inst - Samba VFS Extensions Packages
-  package:
+  ansible.builtin.package:
     name: "{{ samba_vfs_packages }}"
     state: "present"
   tags: samba-inst-package
 
 - name: Inst - Create Samba Shares Root Directory
-  file:
+  ansible.builtin.file:
     state: "directory"
     path: "{{ samba_shares_root }}"
     owner: "root"
@@ -36,7 +36,7 @@
 
 - name: Inst - Create Samba Shares Directories
   with_items: "{{ samba_shares }}"
-  file:
+  ansible.builtin.file:
     state: "directory"
     path: "{{ item.path|default([samba_shares_root,item.name]|join('/')) }}"
     owner: "{{ item.owner|default('root') }}"
@@ -47,7 +47,7 @@
     - samba-inst
 
 - name: Inst - Ensure Webserver Document Root Exists
-  file:
+  ansible.builtin.file:
     name: "{{ samba_www_documentroot }}"
     state: "directory"
   when: samba_create_varwww_symlinks | bool
@@ -55,7 +55,7 @@
     - samba-inst
 
 - name: Inst - Create Link To Shares In Webserver Document Root
-  file:
+  ansible.builtin.file:
     state: link
     path: "{{ samba_www_documentroot }}/{{ item.name }}"
     src: "{{ item.path|default([samba_shares_root,item.name]|join('/')) }}"
@@ -65,7 +65,7 @@
     - samba-inst
 
 - name: Conf - Samba
-  template:
+  ansible.builtin.template:
     dest: "{{ samba_configuration }}"
     src: smb.conf.j2
     validate: 'testparm -s %s'
@@ -75,7 +75,7 @@
     - samba-conf
 
 - name: Conf - Global Include File
-  template:
+  ansible.builtin.template:
     src: "{{ samba_global_include }}"
     dest: "{{ samba_configuration_dir }}"
     validate: 'testparm -s %s'
@@ -86,7 +86,7 @@
     - samba-conf
 
 - name: Conf - Home Include File
-  template:
+  ansible.builtin.template:
     src: "{{ samba_homes_include }}"
     dest: "{{ samba_configuration_dir }}"
     validate: 'testparm -s %s'
@@ -97,7 +97,7 @@
     - samba-conf
 
 - name: Conf - Share Specific Include Files
-  template:
+  ansible.builtin.template:
     src: "{{ item.include_file }}"
     dest: "{{ samba_configuration_dir }}"
     validate: 'testparm -s %s'
@@ -109,7 +109,7 @@
     - samba-conf
 
 - name: Conf - Create Username Map File If Needed
-  template:
+  ansible.builtin.template:
     dest: "{{ samba_username_map_file }}"
     src: smbusers.j2
   notify:

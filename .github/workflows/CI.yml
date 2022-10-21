@@ -4,10 +4,10 @@ name: Ansible CI
 'on':
   # Trigger the workflow on push or pull request,
   # but only for the main branch
-  push:
+  pull_request:
     branches:
       - main
-  pull_request:
+  push:
     branches:
       - main
 
@@ -60,11 +60,12 @@ jobs:
           python-version: '3.x'
 
       - name: Install test dependencies.
-        run: pip3 install yamllint
+        run: pip3 install ansible ansible-lint
 
       - name: Lint code.
-        run: |
-          yamllint .
+        uses: ansible-community/ansible-lint-action@v6.2.1
+        with:
+          path: 'pmikus.docker'
 
   sonarcloud:
     name: SonarCloud
