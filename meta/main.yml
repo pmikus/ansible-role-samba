@@ -14,9 +14,7 @@ galaxy_info:
     - name: Ubuntu
       versions:
         - focal
-        - groovy
-        - hirsute
-        - impish
+        - jammy
   galaxy_tags:
     - system
     - samba
